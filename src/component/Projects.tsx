@@ -1,10 +1,34 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/component/ui/card";
 import { Button } from "@/component/ui/button";
 import { Badge } from "@/component/ui/badge";
-import { ExternalLink, Github, ShoppingCart } from "lucide-react";
+import { ExternalLink, Github, ShoppingCart, Star, GitFork } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+
+interface GitHubRepo {
+  id: number;
+  name: string;
+  description: string;
+  html_url: string;
+  stargazers_count: number;
+  forks_count: number;
+  language: string;
+  topics: string[];
+}
+
+const fetchPinnedRepos = async (): Promise<GitHubRepo[]> => {
+  const response = await fetch('https://api.github.com/users/princek6318/repos?sort=updated&per_page=6');
+  if (!response.ok) {
+    throw new Error('Failed to fetch repositories');
+  }
+  return response.json();
+};
 
 const Projects = () => {
+  const { data: pinnedRepos, isLoading, error } = useQuery({
+    queryKey: ['pinnedRepos'],
+    queryFn: fetchPinnedRepos,
+  });
+
   const projects = [
     {
       title: "E-commerce Shop",
@@ -36,7 +60,80 @@ const Projects = () => {
             </p>
           </div>
           
-          <div className="grid grid-cols-1 gap-8">
+          {/* GitHub Pinned Repositories */}
+          <div className="mb-16">
+            <h3 className="text-2xl font-bold text-foreground mb-8 text-center">
+              GitHub Repositories
+            </h3>
+            {isLoading && (
+              <div className="text-center text-muted-foreground">
+                Loading repositories...
+              </div>
+            )}
+            {error && (
+              <div className="text-center text-muted-foreground">
+                Unable to load repositories
+              </div>
+            )}
+            {pinnedRepos && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                {pinnedRepos.slice(0, 6).map((repo) => (
+                  <Card key={repo.id} className="hover:shadow-lg transition-shadow duration-300">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-lg flex items-center gap-2">
+                        <Github size={20} />
+                        {repo.name}
+                      </CardTitle>
+                      <p className="text-sm text-muted-foreground line-clamp-2">
+                        {repo.description || "No description available"}
+                      </p>
+                    </CardHeader>
+                    <CardContent className="pt-0">
+                      <div className="flex items-center gap-4 text-sm text-muted-foreground mb-3">
+                        {repo.language && (
+                          <div className="flex items-center gap-1">
+                            <div className="w-2 h-2 rounded-full bg-primary"></div>
+                            {repo.language}
+                          </div>
+                        )}
+                        <div className="flex items-center gap-1">
+                          <Star size={14} />
+                          {repo.stargazers_count}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <GitFork size={14} />
+                          {repo.forks_count}
+                        </div>
+                      </div>
+                      {repo.topics && repo.topics.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mb-3">
+                          {repo.topics.slice(0, 3).map((topic) => (
+                            <Badge key={topic} variant="secondary" className="text-xs">
+                              {topic}
+                            </Badge>
+                          ))}
+                        </div>
+                      )}
+                      <Button size="sm" variant="outline" asChild>
+                        <a 
+                          href={repo.html_url} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2"
+                        >
+                          <ExternalLink size={14} />
+                          View Repo
+                        </a>
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Featured Project */}
+          <div className="grid grid-cols-1 gap-8 mb-12">
             {projects.map((project, index) => {
               const IconComponent = project.icon;
               return (
@@ -106,7 +203,7 @@ const Projects = () => {
             })}
           </div>
           
-          <div className="text-center mt-12">
+          <div className="text-center">
             <Button variant="outline" size="lg" asChild>
               <a 
                 href="https://github.com/princek6318" 
