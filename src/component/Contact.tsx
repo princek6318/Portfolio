@@ -18,7 +18,7 @@ const Contact = () => {
 
   const handleResumeDownload = () => {
     // Replace with your actual Google Drive file ID
-    window.open("https://drive.google.com/file/d/your-resume-file-id/view?usp=sharing", "_blank");
+    window.open("https://drive.google.com/file/d/16C-cjhwQH9ZY4PI3A2FOBMt503vspIl-/view?usp=drive_link", "_blank");
     toast({
       title: "Downloading Resume",
       description: "Your download should start shortly.",
@@ -75,11 +75,11 @@ const Contact = () => {
                 <CardContent className="space-y-4">
                   <div className="flex items-center gap-3">
                     <Mail size={20} className="text-primary" />
-                    <span>prince.kakadiya@email.com</span>
+                    <span>kkdprince6318@gmail.com</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <Phone size={20} className="text-primary" />
-                    <span>+91 XXX XXX XXXX</span>
+                    <span>+91 8238002178</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <MapPin size={20} className="text-primary" />
